@@ -26,15 +26,12 @@ public class FilmTest {
         }
         film = new Film();
         film.setName("Film");
-        film.setDescription("Description");
-        film.setReleaseDate(LocalDate.EPOCH);
-        film.setDuration(120L);
     }
 
     @Test
-    public void shouldPassWhenAllValidFields() {
+    public void shouldPassWhenValidName() {
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
-        assertEquals(0, violations.size(), "Не все поля корректны");
+        assertEquals(0, violations.size(), "Корректное имя должно проходить валидацию");
     }
 
     @Test
@@ -59,17 +56,17 @@ public class FilmTest {
     }
 
     @Test
+    public void shouldPassWhenValidId() {
+        film.setId(1L);
+        Set<ConstraintViolation<Film>> violations = validator.validate(film);
+        assertEquals(0, violations.size(), "Корректный id должен проходить валидацию");
+    }
+
+    @Test
     public void shouldFailWhenEmptyName() {
         film.setName(" ");
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         assertEquals(1, violations.size(), "Пустое имя не должно проходить валидацию");
-    }
-
-    @Test
-    public void shouldFailWhenEmptyDescription() {
-        film.setDescription(" ");
-        Set<ConstraintViolation<Film>> violations = validator.validate(film);
-        assertEquals(1, violations.size(), "Пустое описание не должно проходить валидацию");
     }
 
     @Test
@@ -83,6 +80,13 @@ public class FilmTest {
     }
 
     @Test
+    public void shouldPassWhenValidDescription() {
+        film.setDescription("Description");
+        Set<ConstraintViolation<Film>> violations = validator.validate(film);
+        assertEquals(0, violations.size(), "Корректное описание должно проходить валидацию");
+    }
+
+    @Test
     public void shouldFailWhenReleaseDateInFuture() {
         film.setReleaseDate(LocalDate.MAX);
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
@@ -93,7 +97,15 @@ public class FilmTest {
     public void shouldFailWhenReleaseDateBeforeMinDate() {
         film.setReleaseDate(LocalDate.of(1800, 1, 1));
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
-        assertEquals(1, violations.size(), "Дата релиза раньше 1895-12-28 не должна проходить валидацию");
+        assertEquals(1, violations.size(), "Дата релиза раньше 1895-12-28 не должна " +
+                "проходить валидацию");
+    }
+
+    @Test
+    public void shouldPassWhenValidReleaseDate() {
+        film.setReleaseDate(LocalDate.EPOCH);
+        Set<ConstraintViolation<Film>> violations = validator.validate(film);
+        assertEquals(0, violations.size(), "Корректная дата релиза должна проходить валидацию");
     }
 
     @Test
@@ -107,6 +119,14 @@ public class FilmTest {
     public void shouldFailWhenNegativeDuration() {
         film.setDuration(-1L);
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
-        assertEquals(1, violations.size(), "Отрицательная продолжительность не должна проходить валидацию");
+        assertEquals(1, violations.size(), "Отрицательная продолжительность не должна " +
+                "проходить валидацию");
+    }
+
+    @Test
+    public void shouldPassWhenValidDuration() {
+        film.setDuration(120L);
+        Set<ConstraintViolation<Film>> violations = validator.validate(film);
+        assertEquals(0, violations.size(), "Корректная продолжительность должна проходить валидацию");
     }
 }

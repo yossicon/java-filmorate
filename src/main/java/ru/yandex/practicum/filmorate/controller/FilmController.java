@@ -20,6 +20,7 @@ public class FilmController {
 
     @GetMapping
     public Collection<Film> getFilms() {
+        log.info("Получение всех фильмов");
         return films.values();
     }
 
@@ -42,9 +43,15 @@ public class FilmController {
         if (films.containsKey(newFilm.getId())) {
             Film oldFilm = films.get(newFilm.getId());
             oldFilm.setName(newFilm.getName());
-            oldFilm.setDescription(newFilm.getDescription());
-            oldFilm.setReleaseDate(newFilm.getReleaseDate());
-            oldFilm.setDuration(newFilm.getDuration());
+            if (newFilm.getDescription() != null && !newFilm.getDescription().isBlank()) {
+                oldFilm.setDescription(newFilm.getDescription());
+            }
+            if (newFilm.getReleaseDate() != null) {
+                oldFilm.setReleaseDate(newFilm.getReleaseDate());
+            }
+            if (newFilm.getDuration() != null) {
+                oldFilm.setDuration(newFilm.getDuration());
+            }
             log.info("Данные фильма {} с id {} успешно обновлены", oldFilm.getName(), oldFilm.getId());
             return oldFilm;
         }

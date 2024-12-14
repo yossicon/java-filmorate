@@ -20,6 +20,7 @@ public class UserController {
 
     @GetMapping
     public Collection<User> getUsers() {
+        log.info("Получение всех пользователей");
         return users.values();
     }
 
@@ -32,7 +33,7 @@ public class UserController {
                 throw new DuplicatedDataException("Email уже используется");
             }
         });
-        if (user.getName() == null) {
+        if (user.getName() == null || user.getName().isBlank()) {
             user.setName(user.getLogin());
         }
         user.setId(getNextUserId());
@@ -59,12 +60,14 @@ public class UserController {
             });
             oldUser.setEmail(newUser.getEmail());
             oldUser.setLogin(newUser.getLogin());
-            if (newUser.getName() != null) {
+            if (newUser.getName() != null && !newUser.getName().isBlank()) {
                 oldUser.setName(newUser.getName());
             } else {
                 oldUser.setName(newUser.getLogin());
             }
-            oldUser.setBirthday(newUser.getBirthday());
+            if (newUser.getBirthday() != null) {
+                oldUser.setBirthday(newUser.getBirthday());
+            }
             log.info("Данные пользователя {} с id {} успешно обновлены", oldUser.getLogin(), oldUser.getId());
             return oldUser;
         }

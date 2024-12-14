@@ -28,11 +28,10 @@ public class UserTest {
         user.setEmail("user@gmail.com");
         user.setLogin("Login");
         user.setName("Name");
-        user.setBirthday(LocalDate.EPOCH);
     }
 
     @Test
-    public void shouldPassWhenAllValidFields() {
+    public void shouldPassWhenValidRequiredFields() {
         Set<ConstraintViolation<User>> violations = validator.validate(user);
         assertEquals(0, violations.size(), "Не все поля корректны");
     }
@@ -90,6 +89,13 @@ public class UserTest {
     public void shouldFailWhenBirthDateInFuture() {
         user.setBirthday(LocalDate.MAX);
         Set<ConstraintViolation<User>> violations = validator.validate(user);
-        assertEquals(1, violations.size(), "День рождения в будущем не должна проходить валидацию");
+        assertEquals(1, violations.size(), "День рождения в будущем не должен проходить валидацию");
+    }
+
+    @Test
+    public void shouldPassWhenValidBirthDate() {
+        user.setBirthday(LocalDate.EPOCH);
+        Set<ConstraintViolation<User>> violations = validator.validate(user);
+        assertEquals(0, violations.size(), "Не все поля корректны");
     }
 }
