@@ -19,7 +19,7 @@ public class User {
     private Long id;
 
     @NotBlank(message = "Email не может быть пустым")
-    @Email(message = "Email должен соответсвовать формату")
+    @Email(message = "Email должен соответствовать формату")
     private String email;
 
     @NotBlank(message = "Логин не может быть пустым")
