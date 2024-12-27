@@ -15,7 +15,9 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorResponse handleNotFound(final NotFoundException e) {
-        log.info("Ресурс не найден {}", e.getMessage());
+        /*final даёт уверенность, что параметр, который передаётся из
+        контекста спринг, не может быть изменён */
+        log.warn("Ресурс не найден {}", e.getMessage());
         return new ErrorResponse(e.getMessage());
     }
 
