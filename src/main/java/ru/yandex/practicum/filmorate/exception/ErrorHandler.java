@@ -14,51 +14,49 @@ public class ErrorHandler {
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    public ErrorResponse handleNotFound(final NotFoundException e) {
-        /*final даёт уверенность, что параметр, который передаётся из
-        контекста спринг, не может быть изменён */
+    public ErrorResponse handleNotFound(NotFoundException e) {
         log.warn("Ресурс не найден {}", e.getMessage());
         return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.CONFLICT)
-    public ErrorResponse handleDuplicatedData(final DuplicatedDataException e) {
+    public ErrorResponse handleDuplicatedData(DuplicatedDataException e) {
         log.warn("Дублирование данных: {}", e.getMessage());
         return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleConditionsNotMet(final ConditionsNotMetException e) {
+    public ErrorResponse handleConditionsNotMet(ConditionsNotMetException e) {
         log.warn(": {}", e.getMessage());
         return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleParameterNotValid(final ParameterNotValidException e) {
+    public ErrorResponse handleParameterNotValid(ParameterNotValidException e) {
         log.warn("Некорректное значение параметра {}", e.getMessage());
         return new ErrorResponse("Некорректное значение параметра " + e.getParameter() + " : " + e.getReason());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleMethodArgumentNotValid(final MethodArgumentNotValidException e) {
+    public ErrorResponse handleMethodArgumentNotValid(MethodArgumentNotValidException e) {
         log.warn("Ошибка валидации: {}", e.getMessage());
         return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleConstraintViolation(final ConstraintViolationException e) {
+    public ErrorResponse handleConstraintViolation(ConstraintViolationException e) {
         log.warn("Error constraint violation: {}", e.getMessage());
         return new ErrorResponse(e.getMessage());
     }
 
     @ExceptionHandler
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
-    public ErrorResponse handle(final Exception e) {
+    public ErrorResponse handle(Exception e) {
         log.warn("Непредвиденная ошибка:", e);
         return new ErrorResponse(e.getMessage());
     }
