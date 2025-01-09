@@ -1,86 +1,51 @@
 package ru.yandex.practicum.filmorate.controller;
 
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
-import ru.yandex.practicum.filmorate.exception.ConditionsNotMetException;
-import ru.yandex.practicum.filmorate.exception.DuplicatedDataException;
-import ru.yandex.practicum.filmorate.exception.NotFoundException;
 import ru.yandex.practicum.filmorate.model.User;
+import ru.yandex.practicum.filmorate.service.UserService;
 
 import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
 
 @RestController
 @RequestMapping("/users")
+@RequiredArgsConstructor
 @Slf4j
 public class UserController {
-    private final Map<Long, User> users = new HashMap<>();
+    private final UserService userService;
 
     @GetMapping
-    public Collection<User> getUsers() {
+    @ResponseStatus(HttpStatus.OK)
+    public Collection<User> findAll() {
         log.info("Получение всех пользователей");
-        return users.values();
+        return userService.findAll();
+    }
+
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public User findById(Long id) {
+        log.info("Получение пользователя по id {}", id);
+        return userService.findById(id);
     }
 
     @PostMapping
+    @ResponseStatus(HttpStatus.CREATED)
     public User addUser(@Valid @RequestBody User user) {
         log.info("Добавление пользователя {}", user.getLogin());
-        users.forEach((key, value) -> {
-            if (user.getEmail().equals(value.getEmail())) {
-                log.warn("Email {} уже используется", user.getEmail());
-                throw new DuplicatedDataException("Email уже используется");
-            }
-        });
-        if (user.getName() == null || user.getName().isBlank()) {
-            user.setName(user.getLogin());
-        }
-        user.setId(getNextUserId());
-        users.put(user.getId(), user);
-        log.info("Пользователь {} успешно добавлен с id {}", user.getLogin(), user.getId());
-        return user;
+        User addedUser = userService.add(user);
+        log.info("Пользователь {} успешно добавлен с id {}", addedUser.getLogin(), addedUser.getId());
+        return addedUser;
     }
 
     @PutMapping
+    @ResponseStatus(HttpStatus.OK)
     public User updateUser(@Valid @RequestBody User newUser) {
         log.info("Обновление данных пользователя {}", newUser.getLogin());
-        if (newUser.getId() == null) {
-            log.warn("Id не указан");
-            throw new ConditionsNotMetException("Id не указан");
-        }
-        if (users.containsKey(newUser.getId())) {
-            User oldUser = users.get(newUser.getId());
-            users.forEach((key, value) -> {
-                if (newUser.getEmail().equals(value.getEmail())) {
-                    log.warn("Email {} уже используется, email {} не может быть обновлён",
-                            newUser.getEmail(), oldUser.getEmail());
-                    throw new DuplicatedDataException("Email уже используется");
-                }
-            });
-            oldUser.setEmail(newUser.getEmail());
-            oldUser.setLogin(newUser.getLogin());
-            if (newUser.getName() != null && !newUser.getName().isBlank()) {
-                oldUser.setName(newUser.getName());
-            } else {
-                oldUser.setName(newUser.getLogin());
-            }
-            if (newUser.getBirthday() != null) {
-                oldUser.setBirthday(newUser.getBirthday());
-            }
-            log.info("Данные пользователя {} с id {} успешно обновлены", oldUser.getLogin(), oldUser.getId());
-            return oldUser;
-        }
-        log.warn("Пользователь с id = {} не найден", newUser.getId());
-        throw new NotFoundException("Пользователь не найден");
-    }
-
-    private long getNextUserId() {
-        long currentMaxId = users.keySet()
-                .stream()
-                .mapToLong(id -> id)
-                .max()
-                .orElse(0);
-        return ++currentMaxId;
+        User updatedUser = userService.update(newUser);
+        log.info("Данные пользователя {} с id {} успешно обновлены", updatedUser.getLogin(), updatedUser.getId());
+        return updatedUser;
     }
 }
