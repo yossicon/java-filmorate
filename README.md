@@ -1,2 +1,3 @@
-# java-filmorate
-Template repository for Filmorate project.
+§# java-filmorate
+Схема БД.
+![schema.png] (schema.png)

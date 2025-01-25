@@ -1,9 +1,9 @@
 package ru.yandex.practicum.filmorate.storage;
 
-import java.util.Collection;
+import java.util.List;
 
 public interface Storage<T> {
-    Collection<T> findAll();
+    List<T> findAll();
 
     T findById(Long id);
 

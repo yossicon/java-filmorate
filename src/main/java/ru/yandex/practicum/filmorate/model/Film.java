@@ -8,6 +8,7 @@ import lombok.Data;
 import ru.yandex.practicum.filmorate.annotation.MinDate;
 
 import java.time.LocalDate;
+import java.util.Set;
 
 /**
  * Film.
@@ -30,4 +31,8 @@ public class Film {
 
     @Positive(message = "Продолжительность фильма должна быть положительным числом")
     private Long duration;
+
+    private Set<Genre> genres;
+
+    private Mpa mpa;
 }
