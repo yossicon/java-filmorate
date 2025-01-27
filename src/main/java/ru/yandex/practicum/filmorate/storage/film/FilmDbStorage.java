@@ -56,7 +56,7 @@ public class FilmDbStorage implements Storage<Film> {
     }
 
     @Override
-    public Film findById(Long id) {
+    public Optional<Film> findById(Long id) {
         String filmQuery = """
                 SELECT f.*,
                        m.RATING_ID,
@@ -66,27 +66,29 @@ public class FilmDbStorage implements Storage<Film> {
                 WHERE FILM_ID = :id
                 """;
         SqlParameterSource parameters = new MapSqlParameterSource("id", id);
-        Film film = jdbc.queryForObject(filmQuery, parameters, new FilmRowMapper());
-
-        if (film != null) {
-            String genreQuery = """
-                    SELECT fg.GENRE_ID,
-                           g.GENRE_NAME
-                    FROM FILMS_GENRES fg
-                    JOIN GENRES g ON fg.GENRE_ID = g.GENRE_ID
-                    WHERE FILM_ID = :id
-                    ORDER BY GENRE_ID
-                    """;
-            Set<Genre> genres = new LinkedHashSet<>();
-            jdbc.query(genreQuery, parameters, (resultSet) -> {
-                genres.add(new Genre(
-                        resultSet.getInt("GENRE_ID"),
-                        resultSet.getString("GENRE_NAME")
-                ));
-            });
-            film.setGenres(genres);
+        List<Film> films = jdbc.query(filmQuery, parameters, new FilmRowMapper());
+        if (films.isEmpty()) {
+            return Optional.empty();
         }
-        return film;
+
+        Film film = films.get(0);
+        String genreQuery = """
+                SELECT fg.GENRE_ID,
+                       g.GENRE_NAME
+                FROM FILMS_GENRES fg
+                JOIN GENRES g ON fg.GENRE_ID = g.GENRE_ID
+                WHERE FILM_ID = :id
+                ORDER BY GENRE_ID
+                """;
+        Set<Genre> genres = new LinkedHashSet<>();
+        jdbc.query(genreQuery, parameters, (resultSet) -> {
+            genres.add(new Genre(
+                    resultSet.getInt("GENRE_ID"),
+                    resultSet.getString("GENRE_NAME")
+            ));
+        });
+        film.setGenres(genres);
+        return Optional.of(film);
     }
 
     @Override
@@ -164,13 +166,11 @@ public class FilmDbStorage implements Storage<Film> {
                 """;
         SqlParameterSource parameters = new MapSqlParameterSource("count", count);
         List<Long> ids = jdbc.queryForList(query, parameters, Long.class);
-        List<Film> films = new ArrayList<>();
-        if (!ids.isEmpty()) {
-            for (Long id : ids) {
-                films.add(findById(id));
-            }
-        }
-        return films;
+        return ids.stream()
+                .map(this::findById)
+                .filter(Optional::isPresent)
+                .map(Optional::get)
+                .toList();
     }
 
     private void addGenresToFilm(Film film) {

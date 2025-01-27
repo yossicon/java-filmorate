@@ -9,6 +9,7 @@ import ru.yandex.practicum.filmorate.model.Genre;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -22,12 +23,13 @@ public class GenreDbStorage {
                 .toList();
     }
 
-    public Genre findGenreById(Integer id) {
+    public Optional<Genre> findGenreById(Integer id) {
         String query = """
                 SELECT * FROM GENRES
                 WHERE GENRE_ID = :id
                 """;
         SqlParameterSource parameters = new MapSqlParameterSource("id", id);
-        return jdbc.queryForObject(query, parameters, new GenreRowMapper());
+        List<Genre> genres = jdbc.query(query, parameters, new GenreRowMapper());
+        return genres.isEmpty() ? Optional.empty() : Optional.of(genres.get(0));
     }
 }

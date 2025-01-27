@@ -1,9 +1,6 @@
 package ru.yandex.practicum.filmorate.model;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.PastOrPresent;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 import ru.yandex.practicum.filmorate.annotation.MinDate;
 
@@ -16,7 +13,7 @@ import java.util.Set;
 @Data
 public class Film {
 
-    @Positive(message = "id должен быть положительным")
+    @Positive(message = "id фильма должен быть положительным")
     private Long id;
 
     @NotBlank(message = "Название фильма не может быть пустым")
@@ -34,5 +31,6 @@ public class Film {
 
     private Set<Genre> genres;
 
+    @NotNull(message = "Mpa рейтинг обязателен")
     private Mpa mpa;
 }

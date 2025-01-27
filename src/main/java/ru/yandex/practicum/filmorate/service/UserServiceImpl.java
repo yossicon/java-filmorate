@@ -21,11 +21,8 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User findById(Long id) {
-        User user = userDbStorage.findById(id);
-        if (user == null) {
-            throw new NotFoundException(String.format("Пользователь с id %d не найден", id));
-        }
-        return user;
+        return userDbStorage.findById(id)
+                .orElseThrow(() -> new NotFoundException(String.format("Пользователь с id %d не найден", id)));
     }
 
     @Override
@@ -38,10 +35,7 @@ public class UserServiceImpl implements UserService {
         if (newUser.getId() == null) {
             throw new ConditionsNotMetException("Id не указан");
         }
-        User oldUser = userDbStorage.findById(newUser.getId());
-        if (oldUser == null) {
-            throw new NotFoundException(String.format("Пользователь с id %d не найден", newUser.getId()));
-        }
+        findById(newUser.getId());
         return userDbStorage.update(newUser);
     }
 }

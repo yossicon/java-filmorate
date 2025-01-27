@@ -20,10 +20,7 @@ public class MpaServiceImpl implements MpaService {
 
     @Override
     public Mpa findMpaById(Integer id) {
-        Mpa mpa = mpaDbStorage.findMpaById(id);
-        if (mpa == null) {
-            throw new NotFoundException(String.format("Рейтинг с id %d не найден", id));
-        }
-        return mpa;
+        return mpaDbStorage.findMpaById(id)
+                .orElseThrow(() -> new NotFoundException(String.format("Рейтинг с id %d не найден", id)));
     }
 }

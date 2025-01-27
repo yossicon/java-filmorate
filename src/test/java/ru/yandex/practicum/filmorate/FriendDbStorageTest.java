@@ -26,8 +26,8 @@ public class FriendDbStorageTest {
     @Test
     public void testGetUsersFriends() {
         List<User> expectedUsersFriends = new ArrayList<>();
-        expectedUsersFriends.add(userDbStorage.findById(1L));
-        expectedUsersFriends.add(userDbStorage.findById(4L));
+        expectedUsersFriends.add(userDbStorage.findById(1L).get());
+        expectedUsersFriends.add(userDbStorage.findById(4L).get());
         List<User> friends = friendDbStorage.getUsersFriends(3L);
 
         assertThat(friends)
@@ -39,8 +39,8 @@ public class FriendDbStorageTest {
     @Test
     public void testGetCommonFriends() {
         List<User> expectedCommonFriends = new ArrayList<>();
-        expectedCommonFriends.add(userDbStorage.findById(1L));
-        expectedCommonFriends.add(userDbStorage.findById(4L));
+        expectedCommonFriends.add(userDbStorage.findById(1L).get());
+        expectedCommonFriends.add(userDbStorage.findById(4L).get());
         List<User> friends = friendDbStorage.getCommonFriends(2L, 3L);
 
         assertThat(friends)

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import ru.yandex.practicum.filmorate.model.Mpa;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -22,12 +23,13 @@ public class MpaDbStorage {
         return jdbc.query(query, new MpaRowMapper());
     }
 
-    public Mpa findMpaById(Integer id) {
+    public Optional<Mpa> findMpaById(Integer id) {
         String query = """
                 SELECT * FROM MPA_RATING
                 WHERE RATING_ID = :id
                 """;
         SqlParameterSource parameters = new MapSqlParameterSource("id", id);
-        return jdbc.queryForObject(query, parameters, new MpaRowMapper());
+        List<Mpa> ratings = jdbc.query(query, parameters, new MpaRowMapper());
+        return ratings.isEmpty() ? Optional.empty() : Optional.of(ratings.get(0));
     }
 }

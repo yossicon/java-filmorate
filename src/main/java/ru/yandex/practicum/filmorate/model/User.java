@@ -15,7 +15,7 @@ import java.time.LocalDate;
 @Data
 public class User {
 
-    @Positive(message = "id должен быть положительным")
+    @Positive(message = "id пользователя должен быть положительным")
     private Long id;
 
     @NotBlank(message = "Email не может быть пустым")

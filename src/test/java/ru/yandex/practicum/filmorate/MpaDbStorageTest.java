@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.model.Mpa;
 import ru.yandex.practicum.filmorate.storage.mpa.MpaDbStorage;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -31,10 +32,12 @@ public class MpaDbStorageTest {
 
     @Test
     public void testFindMpaById() {
-        Mpa foundedMpa = mpaDbStorage.findMpaById(1);
+        Optional<Mpa> mpaOptional = mpaDbStorage.findMpaById(1);
 
-        assertThat(foundedMpa)
-                .isNotNull()
-                .hasFieldOrPropertyWithValue("id", 1);
+        assertThat(mpaOptional)
+                .isPresent()
+                .hasValueSatisfying(mpa -> assertThat(mpa)
+                        .hasFieldOrPropertyWithValue("id", 1)
+                );
     }
 }

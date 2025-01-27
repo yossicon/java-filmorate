@@ -12,6 +12,7 @@ import ru.yandex.practicum.filmorate.storage.user.UserDbStorage;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -43,11 +44,13 @@ class UserDbStorageTest {
 
     @Test
     public void testFindUserById() {
-        User foundedUser = userDbStorage.findById(1L);
+        Optional<User> userOptional = userDbStorage.findById(1L);
 
-        assertThat(foundedUser)
+        assertThat(userOptional)
                 .isNotNull()
-                .hasFieldOrPropertyWithValue("id", 1L);
+                .hasValueSatisfying(user -> assertThat(user)
+                        .hasFieldOrPropertyWithValue("id", 1L)
+                );
     }
 
     @Test
@@ -56,7 +59,7 @@ class UserDbStorageTest {
 
         assertThat(addedUser)
                 .isNotNull()
-                .isEqualTo(userDbStorage.findById(addedUser.getId()));
+                .isEqualTo(userDbStorage.findById(addedUser.getId()).get());
         assertThat(addedUser.getId()).isNotNull();
         assertThat(addedUser.getEmail()).isEqualTo("user@gmail.com");
         assertThat(addedUser.getLogin()).isEqualTo("login");
@@ -73,7 +76,7 @@ class UserDbStorageTest {
 
         assertThat(updatedUser)
                 .isNotNull()
-                .isEqualTo(userDbStorage.findById(addedUser.getId()));
+                .isEqualTo(userDbStorage.findById(addedUser.getId()).get());
         assertThat(updatedUser.getEmail()).isEqualTo("new_email@gmail.com");
         assertThat(updatedUser.getLogin()).isEqualTo("new_login");
     }

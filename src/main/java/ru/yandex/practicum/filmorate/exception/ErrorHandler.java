@@ -31,7 +31,7 @@ public class ErrorHandler {
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleConditionsNotMet(ConditionsNotMetException e) {
-        log.warn(": {}", e.getMessage());
+        log.warn("Параметр не найден: {}", e.getMessage());
         return new ErrorResponse(e.getMessage());
     }
 

@@ -10,6 +10,7 @@ import ru.yandex.practicum.filmorate.model.Genre;
 import ru.yandex.practicum.filmorate.storage.genre.GenreDbStorage;
 
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -31,10 +32,12 @@ public class GenreDbStorageTest {
 
     @Test
     public void testFindGenreById() {
-        Genre foundedGenre = genreDbStorage.findGenreById(1);
+        Optional<Genre> genreOptional = genreDbStorage.findGenreById(1);
 
-        assertThat(foundedGenre)
-                .isNotNull()
-                .hasFieldOrPropertyWithValue("id", 1);
+        assertThat(genreOptional)
+                .isPresent()
+                .hasValueSatisfying(genre -> assertThat(genre)
+                        .hasFieldOrPropertyWithValue("id", 1)
+                );
     }
 }

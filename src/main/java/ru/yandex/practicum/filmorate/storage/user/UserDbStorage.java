@@ -11,6 +11,7 @@ import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.storage.Storage;
 
 import java.util.List;
+import java.util.Optional;
 
 @Component
 @RequiredArgsConstructor
@@ -24,13 +25,14 @@ public class UserDbStorage implements Storage<User> {
     }
 
     @Override
-    public User findById(Long id) {
+    public Optional<User> findById(Long id) {
         String query = """
                 SELECT * FROM USERS
                 WHERE USER_ID = :id
                 """;
         SqlParameterSource parameters = new MapSqlParameterSource("id", id);
-        return jdbc.queryForObject(query, parameters, new UserRowMapper());
+        List<User> users = jdbc.query(query, parameters, new UserRowMapper());
+        return users.isEmpty() ? Optional.empty() : Optional.of(users.get(0));
     }
 
     @Override
@@ -72,6 +74,6 @@ public class UserDbStorage implements Storage<User> {
                 .addValue("birthday", user.getBirthday())
                 .addValue("id", user.getId());
         jdbc.update(query, parameters);
-        return findById(user.getId());
+        return user;
     }
 }

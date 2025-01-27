@@ -22,11 +22,8 @@ public class FilmServiceImpl implements FilmService {
 
     @Override
     public Film findById(Long id) {
-        Film film = filmDbStorage.findById(id);
-        if (film == null) {
-            throw new NotFoundException(String.format("Фильм с id %d не найден", id));
-        }
-        return film;
+        return filmDbStorage.findById(id)
+                .orElseThrow(() -> new NotFoundException(String.format("Фильм с id %d не найден", id)));
     }
 
     @Override
@@ -47,10 +44,7 @@ public class FilmServiceImpl implements FilmService {
         if (newFilm.getId() == null) {
             throw new ConditionsNotMetException("Id не указан");
         }
-        Film oldFilm = filmDbStorage.findById(newFilm.getId());
-        if (oldFilm == null) {
-            throw new NotFoundException(String.format("Фильм с id %d не найден", newFilm.getId()));
-        }
+        findById(newFilm.getId());
         return filmDbStorage.update(newFilm);
     }
 }
