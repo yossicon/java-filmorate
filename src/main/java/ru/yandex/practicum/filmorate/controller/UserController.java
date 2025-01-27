@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import ru.yandex.practicum.filmorate.model.User;
 import ru.yandex.practicum.filmorate.service.UserService;
 
-import java.util.Collection;
+import java.util.List;
 
 @RestController
 @RequestMapping("/users")
@@ -19,14 +19,14 @@ public class UserController {
 
     @GetMapping
     @ResponseStatus(HttpStatus.OK)
-    public Collection<User> findAll() {
+    public List<User> findAll() {
         log.info("Получение всех пользователей");
         return userService.findAll();
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public User findById(Long id) {
+    public User findById(@PathVariable Long id) {
         log.info("Получение пользователя по id {}", id);
         return userService.findById(id);
     }

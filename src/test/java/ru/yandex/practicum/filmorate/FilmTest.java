@@ -7,6 +7,7 @@ import jakarta.validation.ValidatorFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import ru.yandex.practicum.filmorate.model.Film;
+import ru.yandex.practicum.filmorate.model.Mpa;
 
 import java.time.LocalDate;
 import java.util.Set;
@@ -26,6 +27,7 @@ public class FilmTest {
         }
         film = new Film();
         film.setName("Film");
+        film.setMpa(new Mpa(1, "G"));
     }
 
     @Test
@@ -128,5 +130,22 @@ public class FilmTest {
         film.setDuration(120L);
         Set<ConstraintViolation<Film>> violations = validator.validate(film);
         assertEquals(0, violations.size(), "Корректная продолжительность должна проходить валидацию");
+    }
+
+    @Test
+    public void shouldFailWhenMpaIsNull() {
+        Film testFilm = new Film();
+        testFilm.setName("film");
+        Set<ConstraintViolation<Film>> violations = validator.validate(testFilm);
+        assertEquals(1, violations.size(), "Фильм без mpa не должен проходить валидацию");
+    }
+
+    @Test
+    public void shouldFailWhenMpaNameIsBlank() {
+        Mpa testMpa = (new Mpa(1, " "));
+
+        Set<ConstraintViolation<Mpa>> violations = validator.validate(testMpa);
+        assertEquals(1, violations.size(),
+                "Mpa с пустым названием не должен проходить валидацию");
     }
 }
